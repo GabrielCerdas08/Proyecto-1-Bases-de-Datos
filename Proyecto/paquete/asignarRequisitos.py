@@ -2,6 +2,15 @@ import tkinter as tk
 from tkinter import *
 from tkinter.font import BOLD
 from tkinter import messagebox, ttk
+import mysql.connector
+
+conexion = mysql.connector.connect(user='admin', password='Chester08_',
+host = 'proyectobases.cml2o43rn7yp.us-east-1.rds.amazonaws.com', database = 'Proyecto1', port = '3306',  consume_results=True)
+lista = []
+mycursorBusqueda = conexion.cursor()
+mycursorBusqueda.execute ("SELECT nombre FROM area_academica")
+lista = [i[0]for i in mycursorBusqueda.fetchall()]
+
 
 def ventanaRequisitos():
     ventanaRequisitos = Toplevel()
@@ -14,6 +23,23 @@ def ventanaRequisitos():
         import menuPrincipal
         menuPrincipal.ventanaMenu()
 
+    def getCodigo():
+        global codigo
+        codigo = " "
+        nombre = "'"+str(combo1.get())+"'"
+
+        mycursorGetCodigo = conexion.cursor()
+        mycursorGetCodigo.execute("SELECT codigo_area_academica FROM area_academica WHERE nombre="+ nombre)
+        myresult2 = mycursorGetCodigo.fetchone()
+        for x in myresult2:
+            codigo = x
+            print (codigo)
+        messagebox.showinfo(message="Se ha seleccionado la escuela", title= "¡Escuela selccionada!")
+
+
+    seleccion = Button (ventanaRequisitos,command=getCodigo, text = "Selecionar",  font=("Arial", 10), width=10)
+    seleccion.place(x=700, y=145 )
+
     label1 = Label (ventanaRequisitos, text= "Asignar requistos y correquistos a un curso")
     label1.place(x=75, y=50)
     label1.config(font=("Verdana", 20, BOLD))
@@ -22,7 +48,7 @@ def ventanaRequisitos():
     label2.place(x=80, y=150)
     label2.config(font=("Arial", 12, BOLD))
 
-    combo1 = ttk.Combobox (ventanaRequisitos, state="readonly", width=50 )
+    combo1 = ttk.Combobox (ventanaRequisitos, state="readonly", width=50 , values = lista)
     combo1.place(x=350, y=150)
 
     label3 = Label (ventanaRequisitos, text= "Código del curso:")
