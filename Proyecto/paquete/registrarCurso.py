@@ -25,10 +25,6 @@ def ventanaCurso():
     ventanaCurso.config (width=650, height=700)
     ventanaCurso.resizable(False, False)
 
- 
-
-
-
     def volverMenu():
         ventanaCurso.withdraw()
         import menuPrincipal
@@ -102,14 +98,24 @@ def ventanaCurso():
 
     def insert():
         nombreCursoSTR = nombreCurso.get()
-        codigoCursoSTR = codigo+codigoCurso.get()
+        codigoCursoSTR = codigo + codigoCurso.get()
         creditosSTR = combo2.get()
         horasSTR = combo3.get()
         if nombreCursoSTR == "" or codigoCursoSTR == "" or creditosSTR == "" or horasSTR == "":
             messagebox.showwarning(message="Debe de llenar todos los espacios", title="Datos incompletos")
         else:
+            mycursor = conexion.cursor()
+            sql = "INSERT INTO curso (id_curso,nombre,cantidad_creditos,cantidad_horas_lectivas) VALUES (%s, %s, %s, %s)"
+            val = (codigoCursoSTR,nombreCursoSTR,creditosSTR,horasSTR)
+            mycursor.execute(sql, val)
+            conexion.commit()
+            mycursor2 = conexion.cursor()
+            sql2 = "INSERT INTO intermedia_escuela_curso (codigo_area_academica,id_curso) VALUES (%s, %s)"
+            val2 = (codigo,codigoCursoSTR)
+            mycursor.execute(sql2,val2)
+            conexion.commit()
             messagebox.showinfo(message="Curso registrado", title="Registro completo")
-            print (codigoCursoSTR)
+
 
     def limpiar():
         nombreCurso.delete(0,END)
