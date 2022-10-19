@@ -16,14 +16,9 @@ def ventanaEscuela():
     ventanaEscuela.config (width=800, height=450)
     ventanaEscuela.resizable(False, False)
 
-
-
-
-
     def volverMenu():
         ventanaEscuela.withdraw()
-        import menuPrincipal
-        menuPrincipal.ventanaMenu()
+
 
     label1 = Label (ventanaEscuela, text= "Registro de Escuela o Área Académica")
     label1.place(x=70, y=50)

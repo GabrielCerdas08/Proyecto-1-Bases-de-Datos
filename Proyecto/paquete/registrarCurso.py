@@ -27,8 +27,7 @@ def ventanaCurso():
 
     def volverMenu():
         ventanaCurso.withdraw()
-        import menuPrincipal
-        menuPrincipal.ventanaMenu()
+
 
     label0 = Label (ventanaCurso, text= "Registro de Cursos")
     label0.place(x=150, y=10)

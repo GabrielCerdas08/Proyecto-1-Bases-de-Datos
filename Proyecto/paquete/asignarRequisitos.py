@@ -20,8 +20,6 @@ def ventanaRequisitos():
 
     def volverMenu():
         ventanaRequisitos.withdraw()
-        import menuPrincipal
-        menuPrincipal.ventanaMenu()
 
     def getCodigo():
         global codigo

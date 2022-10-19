@@ -11,9 +11,7 @@ def ventanaPlan():
 
     def volverMenu():
         ventanaPlan.withdraw()
-        import menuPrincipal
-        
-        menuPrincipal.ventanaMenu()
+
 
     label1 = Label (ventanaPlan, text= "Registro de planes de estudio")
     label1.place(x=150, y=50)

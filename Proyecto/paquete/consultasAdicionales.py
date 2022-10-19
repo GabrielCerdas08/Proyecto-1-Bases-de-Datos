@@ -23,8 +23,7 @@ def ventanaConsultaAdicional():
 
     def volverMenu():
         ventanaConsultaAdicional.withdraw()
-        import menuPrincipal
-        menuPrincipal.ventanaMenu()
+
 
 
 

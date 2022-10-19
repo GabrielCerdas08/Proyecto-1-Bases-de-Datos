@@ -23,11 +23,12 @@ def ventanaConsultaPlan():
     ventanaConsultaPlan.config (width=800, height=650)
     ventanaConsultaPlan.resizable(False, False)
 
+    lista = ['1','2','3','4']
+
     
     def volverMenu():
         ventanaConsultaPlan.withdraw()
-        import menuPrincipal
-        menuPrincipal.ventanaMenu()
+
 
 
 
@@ -101,6 +102,7 @@ def ventanaConsultaPlan():
     label4.config(font=("Arial", 10, BOLD))
     listCreditos = Listbox(ventanaConsultaPlan, font=("Arial", 10), width=20)
     listCreditos.place(x=625, y=200)
+    listCreditos.insert(1, *lista)
 
 
 

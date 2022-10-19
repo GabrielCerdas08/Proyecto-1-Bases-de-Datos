@@ -21,8 +21,7 @@ def ventanaEliminarCursoReque():
 
     def volverMenu():
         ventanaEliminarCursoReque.withdraw()
-        import menuPrincipal
-        menuPrincipal.ventanaMenu()
+
 
 
 
