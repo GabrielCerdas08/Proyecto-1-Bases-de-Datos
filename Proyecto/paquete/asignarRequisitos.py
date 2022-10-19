@@ -12,15 +12,19 @@ mycursorBusqueda.execute ("SELECT nombre FROM area_academica")
 lista = [i[0]for i in mycursorBusqueda.fetchall()]
 
 
+
+
+
 def ventanaRequisitos():
     ventanaRequisitos = Toplevel()
     ventanaRequisitos.title("Asignar requistos y correquistos a un curso")
     ventanaRequisitos.config (width=800, height=550)
     ventanaRequisitos.resizable(False, False)
 
+
     def volverMenu():
         ventanaRequisitos.withdraw()
-
+    
     def getCodigo():
         global codigo
         codigo = " "
@@ -31,10 +35,19 @@ def ventanaRequisitos():
         myresult2 = mycursorGetCodigo.fetchone()
         for x in myresult2:
             codigo = x
-            print (codigo)
         messagebox.showinfo(message="Se ha seleccionado la escuela", title= "¡Escuela selccionada!")
+        mycursorBusqueda2 = conexion.cursor()
+        mycursorBusqueda2.execute ("SELECT id_curso FROM intermedia_escuela_curso WHERE codigo_area_academica ="+"'"+codigo+"'")
+        listacursos = [i[0]for i in mycursorBusqueda2.fetchall()]
+        combo3.config(values=listacursos)
+        combo2.config(values=listacursos)
+        combo1.config(values=listacursos)
 
 
+
+
+        
+        
     seleccion = Button (ventanaRequisitos,command=getCodigo, text = "Selecionar",  font=("Arial", 10), width=10)
     seleccion.place(x=700, y=145 )
 
@@ -75,7 +88,7 @@ def ventanaRequisitos():
     combo3 = ttk.Combobox (ventanaRequisitos, state="readonly", width=10 )
     combo3.place(x=200, y=410)
 
-    combo4 = ttk.Combobox (ventanaRequisitos, state="readonly", width=10 )
+    combo4 = ttk.Combobox (ventanaRequisitos, state="readonly", width=10)
     combo4.place(x=450, y=410)
 
     volverButton = Button(ventanaRequisitos, text = "Volver", command=volverMenu,  font=("Arial", 12), width=15)

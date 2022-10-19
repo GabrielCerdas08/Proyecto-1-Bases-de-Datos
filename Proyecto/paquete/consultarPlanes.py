@@ -8,6 +8,9 @@ import mysql.connector
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 
 conexion = mysql.connector.connect(user='admin', password='Chester08_',
 host = 'proyectobases.cml2o43rn7yp.us-east-1.rds.amazonaws.com', database = 'Proyecto1', port = '3306',  consume_results=True)
@@ -76,8 +79,7 @@ def ventanaConsultaPlan():
     correo = ttk.Entry (ventanaConsultaPlan, textvariable="correo", font=("Arial", 12), width=20)
     correo.place(x=75, y=450)
 
-    seleccion3 = Button (ventanaConsultaPlan, text = "Generar PDF y enviar correo",  font=("Arial", 10))
-    seleccion3.place(x=275, y=445 )
+
 
     label1 = Label (ventanaConsultaPlan, text= "Nombre del curso:")
     label1.place(x=175, y=175)
@@ -105,44 +107,62 @@ def ventanaConsultaPlan():
     listCreditos.insert(1, *lista)
 
 
-
-
-
     def enviarcorreo():
-        # import necessary packages
- 
+        body = '''Hello,
+        This is the body of the email
+        sicerely yours
+        G.G.
+        '''
+        # put your email here
+        sender = 'gestorplanesdeestudio2022@gmail.com'
+        # get the password in the gmail (manage your google account, click on the avatar on the right)
+        # then go to security (right) and app password (center)
+        # insert the password and then choose mail and this computer and then generate
+        # copy the password generated here
+        password = 'mxpxgvtpprburcmb'
+        # put the email of the receiver here
+        receiver = correo.get()
 
-        
-        # create message object instance
-        msg = MIMEMultipart()
-        
-        
-        message =""
-        
-        # setup the parameters of the message
-        password = "mxpxgvtpprburcmb"
-        msg['From'] = "gestorplanesdeestudio2022@gmail.com"
-        msg['To'] = ""
-        msg['Subject'] = "Plan de estudios Consultado"
-        
-        # add in the message body
-        msg.attach(MIMEText(message, 'plain'))
-        
-        #create server
-        server = smtplib.SMTP('smtp.gmail.com: 587')
-        
-        server.starttls()
-        
-        # Login Credentials for sending the mail
-        server.login(msg['From'], password)
-        
-        
-        # send the message via the server.
-        server.sendmail(msg['From'], msg['To'], msg.as_string())
-        
-        server.quit()
-        
-        print ("successfully sent email to %s:" % (msg['To']))
+        #Setup the MIME
+        message = MIMEMultipart()
+        message['From'] = sender
+        message['To'] = receiver
+        message['Subject'] = 'This email has an attacment, a pdf file'
+
+        message.attach(MIMEText(body, 'plain'))
+
+        pdfname = "Users\gaboc\OneDrive - Estudiantes ITCR\Documentos\GitHub\Proyecto-1-Bases-de-Datos\hoja.pdf"
+
+        # open the file in bynary
+        binary_pdf = open(pdfname, 'rb')
+
+        payload = MIMEBase('application', 'octate-stream', Name=pdfname)
+        # payload = MIMEBase('application', 'pdf', Name=pdfname)
+        payload.set_payload((binary_pdf).read())
+
+        # enconding the binary into base64
+        encoders.encode_base64(payload)
+
+        # add header with pdf name
+        payload.add_header('Content-Decomposition', 'attachment', filename=pdfname)
+        message.attach(payload)
+
+        #use gmail with port
+        session = smtplib.SMTP('smtp.gmail.com', 587)
+
+        #enable security
+        session.starttls()
+
+        #login with mail_id and password
+        session.login(sender, password)
+
+        text = message.as_string()
+        session.sendmail(sender, receiver, text)
+        session.quit()
+        print('Mail Sent')
+
+    seleccion3 = Button (ventanaConsultaPlan, text = "Generar PDF y enviar correo",command=enviarcorreo,  font=("Arial", 10))
+    seleccion3.place(x=275, y=445 )
 
     registrarButton = Button(ventanaConsultaPlan, text = "Volver",  font=("Arial", 12), width=15, command=volverMenu)
     registrarButton.place(x=350,y=550)
