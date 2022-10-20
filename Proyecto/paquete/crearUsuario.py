@@ -55,6 +55,8 @@ def ventanaRegistro():
 
     def volver():
         ventanaRegistro.withdraw()
+        import inicio
+        inicio.ventanaInicio()
 
         
     def insert():
