@@ -131,7 +131,7 @@ def ventanaConsultaPlan():
 
         message.attach(MIMEText(body, 'plain'))
 
-        pdfname = "Users\gaboc\OneDrive - Estudiantes ITCR\Documentos\GitHub\Proyecto-1-Bases-de-Datos\hoja.pdf"
+        pdfname = "Proyecto\PDFS\hoja.pdf"
 
         # open the file in bynary
         binary_pdf = open(pdfname, 'rb')
