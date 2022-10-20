@@ -26,7 +26,6 @@ def ventanaConsultaPlan():
     ventanaConsultaPlan.config (width=800, height=650)
     ventanaConsultaPlan.resizable(False, False)
 
-    lista = ['1','2','3','4']
 
     
     def volverMenu():
