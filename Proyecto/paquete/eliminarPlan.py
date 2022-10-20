@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter.font import BOLD
 from tkinter import messagebox, ttk
 from unittest import result
+from webbrowser import get
 import mysql.connector
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -22,10 +23,6 @@ def ventanaEliminarCursoPlan():
     def volverMenu():
         ventanaEliminarCursoPlan.withdraw()
 
-
-
-
-
     label5 = Label (ventanaEliminarCursoPlan, text= "Eliminar relacion de cursos y plan de estudio")
     label5.place(x=10, y=10)
     label5.config(font=("Verdana", 12, BOLD))
@@ -37,7 +34,28 @@ def ventanaEliminarCursoPlan():
     combo1 = ttk.Combobox (ventanaEliminarCursoPlan, state="readonly", width=25, values=lista)
     combo1.place(x=90, y=100)
 
-    seleccion = Button (ventanaEliminarCursoPlan, text = "Seleccionar",  font=("Arial", 10), width=10)
+    
+    def getCodigo():
+        global codigo
+        codigo = " "
+        nombre = "'"+str(combo1.get())+"'"
+
+        mycursorGetCodigo = conexion.cursor()
+        mycursorGetCodigo.execute("SELECT id_curso FROM curso WHERE nombre="+ nombre)
+        myresult2 = mycursorGetCodigo.fetchone()
+        for x in myresult2:
+            codigo = x
+        messagebox.showinfo(message="Se ha seleccionado el curso", title= "¡Curso seleccioanado!")
+        if codigo == "":
+            messagebox.showwarning(message="Debe de llenar todos los espacios", title="Datos incompletos")
+        else:
+            mycursorBusqueda = conexion.cursor()
+            mycursorBusqueda.execute ("SELECT numero_plan FROM intermedia_planestudio_curso WHERE id_curso ="+"'"+codigo+"'")
+            listaplanes = [i[0]for i in mycursorBusqueda.fetchall()]
+            combo2.configure(values=listaplanes)
+
+
+    seleccion = Button (ventanaEliminarCursoPlan, text = "Seleccionar",  font=("Arial", 10), width=10, command=getCodigo)
     seleccion.place(x=270, y=95 )
 
     label6 = Label (ventanaEliminarCursoPlan, text= "Planes asociados:")
@@ -47,7 +65,24 @@ def ventanaEliminarCursoPlan():
     combo2 = ttk.Combobox (ventanaEliminarCursoPlan, state="readonly", width=25, values=lista)
     combo2.place(x=175, y=150)
 
-    seleccion = Button (ventanaEliminarCursoPlan, text = "Eliminar relacion",  font=("Arial", 10))
+
+
+    def eliminar():
+        planesSTR = combo2.get()
+        if codigo == "" or planesSTR == "":
+            messagebox.showwarning(message="Debe de llenar todos los espacios", title="Datos incompletos")
+            
+        else: 
+            mycursor= conexion.cursor()
+            sql = "DELETE FROM intermedia_planestudio_curso WHERE numero_plan = %s AND id_curso = %s"
+            adr = (planesSTR, codigo)
+
+            mycursor.execute(sql, adr)
+
+            conexion.commit()
+            messagebox.showinfo(message="Se ha eliminado el curso del plan", title= "¡Curso eliminado!")
+
+    seleccion = Button (ventanaEliminarCursoPlan, text = "Eliminar relacion",  font=("Arial", 10),command=eliminar)
     seleccion.place(x=145, y=200 )
 
     Volver = Button(ventanaEliminarCursoPlan, text = "Volver",  font=("Arial", 12), width=15, command= volverMenu)

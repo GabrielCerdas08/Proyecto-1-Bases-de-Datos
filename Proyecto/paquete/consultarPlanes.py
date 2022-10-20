@@ -31,7 +31,50 @@ def ventanaConsultaPlan():
     def volverMenu():
         ventanaConsultaPlan.withdraw()
 
+    def getCodigo():
+        global codigo
+        codigo = " "
+        nombre = "'"+str(combo1.get())+"'"
 
+        mycursorGetCodigo = conexion.cursor()
+        mycursorGetCodigo.execute("SELECT codigo_area_academica FROM area_academica WHERE nombre="+ nombre)
+        myresult = mycursorGetCodigo.fetchone()
+        for x in myresult:
+            codigo = x
+
+        messagebox.showinfo(message="Se ha seleccionado la escuela", title= "¡Escuela selccionada!")
+
+        if codigo == "":
+            messagebox.showwarning(message="Debe de llenar todos los espacios", title="Datos incompletos")
+        else:
+            combo2.delete(0, END)
+            mycursorBusqueda = conexion.cursor()
+            mycursorBusqueda.execute ("SELECT numero_plan FROM plan_estudio WHERE codigo_area_academica ="+"'"+codigo+"'")
+            listaplanes = [i[0]for i in mycursorBusqueda.fetchall()]
+            combo2.configure(values=listaplanes)
+
+
+    def getplan():
+        global         codigocurso 
+
+        codigocurso = " "
+        fecha = ""
+        nombre = "'"+str(combo2.get())+"'"
+
+        mycursorGetCodigoplan = conexion.cursor()
+        mycursorGetCodigoplan.execute("SELECT id_curso FROM intermedia_planestudio_curso WHERE numero_plan="+ nombre)
+        myresult = mycursorGetCodigoplan.fetchone()
+        for x in myresult:
+            codigocurso = x
+
+        mycursorGetCodigoplan2 = conexion.cursor()
+        mycursorGetCodigoplan2.execute("SELECT fecha_entrada_vigencia FROM plan_estudio WHERE numero_plan="+ nombre)
+        myresult2 = mycursorGetCodigoplan2.fetchone()
+        for x in myresult2:
+            fecha = x
+            label8.configure(text="Vigencia del plan: "+ fecha )
+
+        messagebox.showinfo(message="Se ha seleccionado el plan", title= "¡Plan selccionado!")
 
 
 
@@ -47,7 +90,7 @@ def ventanaConsultaPlan():
     combo1 = ttk.Combobox (ventanaConsultaPlan, state="readonly", width=25, values=lista)
     combo1.place(x=180, y=70)
 
-    seleccion = Button (ventanaConsultaPlan, text = "Selecionar",  font=("Arial", 10), width=10)
+    seleccion = Button (ventanaConsultaPlan, text = "Selecionar", command=getCodigo, font=("Arial", 10), width=10)
     seleccion.place(x=375, y=65 )
 
     label7 = Label (ventanaConsultaPlan, text= "Codigo del plan de estudios:")
@@ -57,7 +100,7 @@ def ventanaConsultaPlan():
     combo2 = ttk.Combobox (ventanaConsultaPlan, state="readonly", width=25, values=lista)
     combo2.place(x=240, y=115)
 
-    seleccion2 = Button (ventanaConsultaPlan, text = "Selecionar",  font=("Arial", 10), width=10)
+    seleccion2 = Button (ventanaConsultaPlan, text = "Selecionar",command=getplan,  font=("Arial", 10), width=10)
     seleccion2.place(x=430, y=115 )
 
 
@@ -106,11 +149,65 @@ def ventanaConsultaPlan():
     listCreditos.insert(1, *lista)
 
 
+    def generarpdf():
+
+
+        from fpdf import FPDF
+
+        # datos para usar
+        lista_datos = [
+            (1, 'Carlos', 'carlos@gmail.com', '2020-02-25'),
+            (2, 'Jose', 'jose@gmail.com', '2019-03-12'),
+            (3, 'Marcos', 'marcos@gmail.com', '2018-01-31'),
+            (4, 'Luz', 'luz@gmail.com', '2017-02-15'),
+            (5, 'Elmer', 'elmer@gmail.com', '2016-11-23'),
+            ]
+
+        pdf = FPDF(orientation = 'P', unit = 'mm', format='A4') 
+        pdf.add_page()
+
+        # TEXTO
+        pdf.set_font('Arial', '', 15)
+
+        # titulo
+        pdf.cell(w = 0, h = 15, txt = 'Reporte de plan de estudios', border = 1, ln=1,
+                align = 'C', fill = 0)
+
+        # encabezado
+        pdf.cell(w = 20, h = 15, txt = 'Codigo', border = 1,
+                align = 'C', fill = 0)
+
+        pdf.cell(w = 40, h = 15, txt = 'Nombre', border = 1,
+                align = 'C', fill = 0)
+
+        pdf.cell(w = 70, h = 15, txt = 'Horas', border = 1,
+                align = 'C', fill = 0)
+
+        pdf.multi_cell(w = 0, h = 15, txt = 'Creditos', border = 1,
+                align = 'C', fill = 0)
+
+
+        # valores
+        for valor in lista_datos:
+
+            pdf.cell(w = 20, h = 9, txt = str(valor[0]), border = 1,
+                    align = 'C', fill = 0)
+
+            pdf.cell(w = 40, h = 9, txt = valor[1], border = 1,
+                    align = 'C', fill = 0)
+
+            pdf.cell(w = 70, h = 9, txt = valor[2], border = 1,
+                    align = 'C', fill = 0)
+
+            pdf.multi_cell(w = 0, h = 9, txt = valor[3], border = 1,
+                    align = 'C', fill = 0)
+
+
+        pdf.output('Proyecto\PDFS\ '+ combo2.get()+ ".pdf")
+
+
     def enviarcorreo():
-        body = '''Hello,
-        This is the body of the email
-        sicerely yours
-        G.G.
+        body = '''El siguiente correo se le envia para dar con el reporte del plan de estudios solicitado, se adjunta el respectivo archivo pdf
         '''
         # put your email here
         sender = 'gestorplanesdeestudio2022@gmail.com'
@@ -126,11 +223,11 @@ def ventanaConsultaPlan():
         message = MIMEMultipart()
         message['From'] = sender
         message['To'] = receiver
-        message['Subject'] = 'This email has an attacment, a pdf file'
+        message['Subject'] = 'Plan de estudios'
 
         message.attach(MIMEText(body, 'plain'))
 
-        pdfname = "Proyecto\PDFS\hoja.pdf"
+        pdfname = 'Proyecto\PDFS\ '+ combo2.get()+ ".pdf"
 
         # open the file in bynary
         binary_pdf = open(pdfname, 'rb')
@@ -158,9 +255,15 @@ def ventanaConsultaPlan():
         text = message.as_string()
         session.sendmail(sender, receiver, text)
         session.quit()
-        print('Mail Sent')
 
-    seleccion3 = Button (ventanaConsultaPlan, text = "Generar PDF y enviar correo",command=enviarcorreo,  font=("Arial", 10))
+        messagebox.showinfo(message="Correo enviado", title= "¡Se ha enviado!")
+        
+
+    def enviarYcrear():
+        generarpdf()
+        enviarcorreo()
+
+    seleccion3 = Button (ventanaConsultaPlan, text = "Generar PDF y enviar correo",command=enviarYcrear,  font=("Arial", 10))
     seleccion3.place(x=275, y=445 )
 
     registrarButton = Button(ventanaConsultaPlan, text = "Volver",  font=("Arial", 12), width=15, command=volverMenu)
