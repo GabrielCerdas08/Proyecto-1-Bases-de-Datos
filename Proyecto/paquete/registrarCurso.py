@@ -100,7 +100,7 @@ def ventanaCurso():
         codigoCursoSTR = codigo + codigoCurso.get()
         creditosSTR = combo2.get()
         horasSTR = combo3.get()
-        if nombreCursoSTR == "" or codigoCursoSTR == "" or creditosSTR == "" or horasSTR == "":
+        if codigo == "" or nombreCursoSTR == "" or codigoCursoSTR == "" or creditosSTR == "" or horasSTR == "":
             messagebox.showwarning(message="Debe de llenar todos los espacios", title="Datos incompletos")
         else:
             mycursor = conexion.cursor()
