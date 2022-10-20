@@ -1,0 +1,14 @@
+import tkinter as tk
+from tkinter import *
+from tkinter.font import BOLD
+from tkinter import messagebox, ttk
+
+import mysql.connector
+
+conexion = mysql.connector.connect(user='admin', password='Chester08_',
+host = 'proyectobases.cml2o43rn7yp.us-east-1.rds.amazonaws.com', database = 'Proyecto1', port = '3306', consume_results=True)
+
+mycursorGetCodigo = conexion.cursor()
+mycursorGetCodigo.execute("SELECT * FROM area_academica")
+lista = [i for i in mycursorGetCodigo.fetchall()]
+print (lista)

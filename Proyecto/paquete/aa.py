@@ -1,13 +1,13 @@
 from fpdf import FPDF
 
 # datos para usar
-lista_datos = (
+lista_datos = [
     (1, 'Carlos', 'carlos@gmail.com', '2020-02-25'),
     (2, 'Jose', 'jose@gmail.com', '2019-03-12'),
     (3, 'Marcos', 'marcos@gmail.com', '2018-01-31'),
     (4, 'Luz', 'luz@gmail.com', '2017-02-15'),
     (5, 'Elmer', 'elmer@gmail.com', '2016-11-23'),
-    )
+    ]
 
 pdf = FPDF(orientation = 'P', unit = 'mm', format='A4') 
 pdf.add_page()
@@ -49,4 +49,4 @@ for valor in lista_datos:
             align = 'C', fill = 0)
 
 
-pdf.output('hoja+2.pdf')
+pdf.output('hoja+2didi.pdf')

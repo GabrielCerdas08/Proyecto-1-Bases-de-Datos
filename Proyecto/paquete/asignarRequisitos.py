@@ -41,7 +41,7 @@ def ventanaRequisitos():
         listacursos = [i[0]for i in mycursorBusqueda2.fetchall()]
         combo3.config(values=listacursos)
         combo2.config(values=listacursos)
-        combo1.config(values=listacursos)
+        combo4.config(values=listacursos)
 
 
 
@@ -91,13 +91,40 @@ def ventanaRequisitos():
     combo4 = ttk.Combobox (ventanaRequisitos, state="readonly", width=10)
     combo4.place(x=450, y=410)
 
+    def insertRequisito():
+        requisitoSTR = combo3.get()
+        cursoSTR = combo2.get()
+        if requisitoSTR == "" and cursoSTR == "":
+            messagebox.showwarning(message="Debe llenar todos los espacios", title="Datos incompletos")
+        else:
+            mycursor = conexion.cursor()
+            sql = "INSERT INTO requisitos (id_curso_original,id_curso_requisito) VALUES (%s, %s)"
+            val = (cursoSTR,requisitoSTR)
+            mycursor.execute(sql,val)
+            conexion.commit()
+            messagebox.showinfo(message="Requisito asignado al curso")
+
+    def insertCorrequisito():
+        correquisitoSTR = combo4.get()
+        cursoSTR = combo2.get()
+        if correquisitoSTR == "" and cursoSTR == "":
+            messagebox.showwarning(message="Debe llenar todos los espacios", title="Datos incompletos")
+        else:
+            mycursor = conexion.cursor()
+            sql = "INSERT INTO correquisito (id_curso_original,id_curso_correquisito) VALUES (%s, %s)"
+            val = (cursoSTR,correquisitoSTR)
+            mycursor.execute(sql,val)
+            conexion.commit()
+            messagebox.showinfo(message="Correquisito asignado al curso")
+
+
     volverButton = Button(ventanaRequisitos, text = "Volver", command=volverMenu,  font=("Arial", 12), width=15)
     volverButton.place(x=650,y=500)
 
-    registrarButton = Button(ventanaRequisitos, text = "Registrar Requisito",  font=("Arial", 10), width=15)
+    registrarButton = Button(ventanaRequisitos, text = "Registrar Requisito",command=insertRequisito,  font=("Arial", 10), width=15)
     registrarButton.place(x=200, y=450)
 
-    registarButton2 = Button(ventanaRequisitos, text = "Registrar Correquisito",  font=("Arial", 10), width=15)
+    registarButton2 = Button(ventanaRequisitos, text = "Registrar Correquisito", command=insertCorrequisito,  font=("Arial", 10), width=15)
     registarButton2.place(x=450, y=450)
 
     ventanaRequisitos.mainloop()
