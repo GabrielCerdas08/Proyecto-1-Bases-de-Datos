@@ -13,12 +13,10 @@ def ventanaMenu():
 
     
      def irConsulta():
-          ventanaMenu.destroy()
           import consultarPlanes
           consultarPlanes.ventanaConsultaPlan()
 
      def irConsultaAdicional():
-          ventanaMenu.destroy()
           import consultasAdicionales
           consultasAdicionales.ventanaConsultaAdicional()
 

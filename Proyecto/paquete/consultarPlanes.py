@@ -42,7 +42,7 @@ def ventanaConsultaPlan():
         for x in myresult:
             codigo = x
 
-        messagebox.showinfo(message="Se ha seleccionado la escuela", title= "¡Escuela selccionada!")
+        messagebox.showinfo(message="Se ha seleccionado la escuela", title= "¡Escuela seleccionada!")
 
         if codigo == "":
             messagebox.showwarning(message="Debe de llenar todos los espacios", title="Datos incompletos")
@@ -56,16 +56,15 @@ def ventanaConsultaPlan():
 
     def getplan():
         global         codigocurso 
-
+        global listaCodigos 
         codigocurso = " "
         fecha = ""
         nombre = "'"+str(combo2.get())+"'"
-
         mycursorGetCodigoplan = conexion.cursor()
         mycursorGetCodigoplan.execute("SELECT id_curso FROM intermedia_planestudio_curso WHERE numero_plan="+ nombre)
-        myresult = mycursorGetCodigoplan.fetchone()
-        for x in myresult:
-            codigocurso = x
+        listaCodigos = [i[0] for i in mycursorGetCodigoplan.fetchall()]
+        listCodigos.insert(1,*listaCodigos)
+
 
         mycursorGetCodigoplan2 = conexion.cursor()
         mycursorGetCodigoplan2.execute("SELECT fecha_entrada_vigencia FROM plan_estudio WHERE numero_plan="+ nombre)
@@ -74,9 +73,41 @@ def ventanaConsultaPlan():
             fecha = x
             label8.configure(text="Vigencia del plan: "+ fecha )
 
-        messagebox.showinfo(message="Se ha seleccionado el plan", title= "¡Plan selccionado!")
+        messagebox.showinfo(message="Se ha seleccionado el plan", title= "¡Plan seleccionado!")
 
 
+        #Info de cada curso
+        #nombre
+        mycursorNombres = conexion.cursor()
+        listaNombres = []
+        nombreSinCorchetes = " "
+        for i in listaCodigos:
+            mycursorNombres.execute("SELECT nombre FROM curso WHERE id_curso="+"'"+i+"'")
+            nombreSTR = mycursorNombres.fetchone()
+            for x in nombreSTR:
+                nombreSinCorchetes = x
+            listaNombres.append(nombreSinCorchetes)
+        listNombreCurso.insert(1,*listaNombres)
+        #bloque
+        mycursorBloque = conexion.cursor()
+        mycursorBloque.execute("SELECT bloque FROM intermedia_planestudio_curso WHERE numero_plan="+ nombre)
+        listaBloques = [str(i[0]) for i in mycursorBloque.fetchall()]
+        listBloque.insert(1,*listaBloques)
+        #horas lectivas
+        mycursorHorasLectivas = conexion.cursor()
+        listaHorasLectivas = []
+        for i in listaCodigos:
+            mycursorHorasLectivas.execute("SELECT cantidad_horas_lectivas FROM curso WHERE id_curso="+"'"+i+"'")
+            listaHorasLectivas.append(mycursorHorasLectivas.fetchone())
+        listhoras.insert(1,*listaHorasLectivas)
+        #créditos
+        mycursorCreditos = conexion.cursor()
+        listaCreditos = []
+        for i in listaCodigos:
+            mycursorCreditos.execute("SELECT cantidad_creditos FROM curso WHERE id_curso="+"'"+i+"'")
+            listaCreditos.append(mycursorCreditos.fetchone())
+        listCreditos.insert(1,*listaCreditos)
+            
 
     label5 = Label (ventanaConsultaPlan, text= "Consultar Plan de estudios")
     label5.place(x=150, y=10)
@@ -146,22 +177,26 @@ def ventanaConsultaPlan():
     label4.config(font=("Arial", 10, BOLD))
     listCreditos = Listbox(ventanaConsultaPlan, font=("Arial", 10), width=20)
     listCreditos.place(x=625, y=200)
-    listCreditos.insert(1, *lista)
 
 
     def generarpdf():
+        global listaCodigosPDF
+        listaCodigosPDF = []
 
+        
+        mycursorPDF = conexion.cursor()
+        listaPDF = []
+        print (listaCodigos)
+        for i in listaCodigos:
+            mycursorPDF.execute("SELECT id_curso, nombre, cantidad_horas_lectivas, cantidad_creditos FROM curso WHERE id_curso="+"'"+i+"'")
+            listaCodigosPDF += [x for x in mycursorPDF.fetchall()]
+        print(listaCodigosPDF)
 
         from fpdf import FPDF
 
         # datos para usar
-        lista_datos = [
-            (1, 'Carlos', 'carlos@gmail.com', '2020-02-25'),
-            (2, 'Jose', 'jose@gmail.com', '2019-03-12'),
-            (3, 'Marcos', 'marcos@gmail.com', '2018-01-31'),
-            (4, 'Luz', 'luz@gmail.com', '2017-02-15'),
-            (5, 'Elmer', 'elmer@gmail.com', '2016-11-23'),
-            ]
+        lista_datos = []
+        lista_datos = listaCodigosPDF
 
         pdf = FPDF(orientation = 'P', unit = 'mm', format='A4') 
         pdf.add_page()

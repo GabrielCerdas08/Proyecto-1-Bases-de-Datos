@@ -4,11 +4,13 @@ from tkinter.font import BOLD
 from tkinter import messagebox, ttk
 
 import mysql.connector
-
 conexion = mysql.connector.connect(user='admin', password='Chester08_',
 host = 'proyectobases.cml2o43rn7yp.us-east-1.rds.amazonaws.com', database = 'Proyecto1', port = '3306', consume_results=True)
-
+codigo = " "
 mycursorGetCodigo = conexion.cursor()
-mycursorGetCodigo.execute("SELECT * FROM area_academica")
-lista = [i for i in mycursorGetCodigo.fetchall()]
-print (lista)
+mycursorGetCodigo.execute("SELECT count(id_curso) FROM intermedia_planestudio_curso WHERE id_curso = 'MA1101'")
+#lista = [i for i in mycursorGetCodigo.fetchall()]
+lista = mycursorGetCodigo.fetchone()
+codigo = lista[0]
+print (codigo)
+
