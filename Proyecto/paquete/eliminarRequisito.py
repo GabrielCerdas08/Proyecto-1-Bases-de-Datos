@@ -26,7 +26,7 @@ def ventanaEliminarCursoReque():
     def getCodigo():
         global codigo
         codigo = " "
-        nombre = "'"+str(combo2.get())+"'"
+        nombre = "'"+str(combo1.get())+"'"
 
         mycursorGetCodigo = conexion.cursor()
         mycursorGetCodigo.execute("SELECT id_curso FROM curso WHERE nombre="+ nombre)
@@ -71,7 +71,7 @@ def ventanaEliminarCursoReque():
         else:
             mycursor = conexion.cursor()
             sql = "DELETE FROM requisitos WHERE id_curso_original = %s AND id_curso_requisito = %s"
-            adr = (requisitosSTR, codigo)
+            adr = ( codigo, requisitosSTR)
 
             mycursor.execute(sql, adr)
 
